@@ -141,23 +141,6 @@ gethash(void)
 	return hash;
 }
 static void
-refresh_passwd(Display *dpy, Window win , int screen, const char* passwd, cairo_t* cr, cairo_surface_t* sfc)
-{/*Function that displays given time on the given screen*/
-	static char tm[24]="";
-	int xpos,ypos;
-	xpos=DisplayWidth(dpy, screen)/2;
-	ypos=DisplayHeight(dpy, screen)/4;
-	sprintf(tm,"%s", passwd);
-	XClearWindow(dpy, win);
-    cairo_set_source_rgb(cr, textcolorred, textcolorgreen, textcolorblue);
-	cairo_select_font_face(cr, textfamily, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, textsize);
-	cairo_move_to(cr, xpos, ypos);
-	cairo_show_text(cr, tm);
-	cairo_surface_flush(sfc);
-	XFlush(dpy);
-}
-static void
 refresh(Display *dpy, Window win , int screen, struct tm time, cairo_t* cr, cairo_surface_t* sfc)
 {/*Function that displays given time on the given screen*/
 	static char tm[24]="";
@@ -259,7 +242,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 			}
 			color = len ? INPUT : ((failure || failonclear) ? FAILED : INIT);
 			if (running && oldc != color) {
-+		        pthread_mutex_lock(&mutex); /*Stop the time refresh thread from interfering*/
+		        pthread_mutex_lock(&mutex); /*Stop the time refresh thread from interfering*/
 				for (screen = 0; screen < nscreens; screen++) {
                                         if (locks[screen]->bgmap)
                                                 XSetWindowBackgroundPixmap(dpy, locks[screen]->win, locks[screen]->bgmap);
@@ -269,7 +252,6 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
                     time_t rawtime;
                     time(&rawtime);
 	                refresh(dpy, locks[screen]->win,locks[screen]->screen, *localtime(&rawtime),crs[screen],surfaces[screen]);
-	                refresh_passwd(dpy, locks[screen]->win,locks[screen]->screen, passwd, crs[screen],surfaces[screen]);
 
 					/*Redraw the time after screen cleared*/
 				}
