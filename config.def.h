@@ -8,6 +8,9 @@ static const char *colorname[NUMCOLS] = {
 /* treat a cleared input like a wrong password (color) */
 static const int failonclear = 1;
 
+/* enable or disable (1 means enable, 0 disable) bell sound when password is incorrect */
+static const int xbell = 0;
+
 static const int logosize = 75;
 static const int logow = 12; /* Grid width and height for right center alignment*/
 static const int logoh = 6;
